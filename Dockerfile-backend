@@ -1,0 +1,3 @@
+FROM openjdk:11-jre-slim
+COPY target/react-and-spring-data-rest-*.jar /app.jar
+ENTRYPOINT ["java", "-jar", "/app.jar"]
