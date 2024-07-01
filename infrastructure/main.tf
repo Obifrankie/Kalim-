@@ -12,15 +12,7 @@ terraform {
   }
 }
 
-# # Include network resources
-# module "network" {
-#   source = ".//network"
-# }
 
-# # Include compute resources
-# module "compute" {
-#   source = ".//compute"
-# }
 
 
 

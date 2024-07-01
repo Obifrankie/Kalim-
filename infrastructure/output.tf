@@ -47,3 +47,5 @@ output "frontend_lb_dns_name" {
 output "backend_lb_dns_name" {
   value = aws_lb.backend_lb.dns_name
 }
+
+
