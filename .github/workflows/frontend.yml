@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - frontend/**  # This ensures the pipeline runs when any file in the frontend directory changes
+    # paths:
+    #   - frontend/**  # This ensures the pipeline runs when any file in the frontend directory changes
 
 jobs:
   build-and-deploy:
