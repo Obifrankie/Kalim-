@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - frontend/Dockerfile  
+      - frontend/**  # This ensures the pipeline runs when any file in the frontend directory changes
 
 jobs:
   build-and-deploy:
@@ -31,7 +31,8 @@ jobs:
         env:
           TAG: ${{ github.sha }}
         run: |
-          docker build -t your-dockerhub-username/frontend:$TAG ./frontend
+          cd frontend  # Change to the frontend directory
+          docker build -t your-dockerhub-username/frontend:$TAG .
           docker push your-dockerhub-username/frontend:$TAG
 
       # SSH into your frontend EC2 instance and deploy the frontend container

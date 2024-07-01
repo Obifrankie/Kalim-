@@ -1,3 +1,5 @@
+# Dockerfile located in ./frontend directory
+
 FROM node:16 AS build
 WORKDIR /app
 COPY package*.json ./
