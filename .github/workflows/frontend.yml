@@ -32,8 +32,8 @@ jobs:
           TAG: ${{ github.sha }}
         run: |
           cd frontend  
-          docker build -t your-dockerhub-username/frontend:$TAG .
-          docker push your-dockerhub-username/frontend:$TAG
+          docker build -t obifrankie/frontend:$TAG .
+          docker push obifrankie/frontend:$TAG
 
       # SSH into your frontend EC2 instance and deploy the frontend container
       - name: Deploy frontend to EC2 instance
