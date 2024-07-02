@@ -8,41 +8,32 @@ on:
       - backend/**
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      # Set up Docker CLI
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      # Login to Docker Hub or another registry where you push images
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      # Build and push Docker image for backend
-      - name: Build and push backend Docker image
-        env:
-          TAG: ${{ github.sha }}
+      - name: Set up SSH
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}backend:$TAG -f backend/Dockerfile .
-          docker push ${{ secrets.DOCKER_USERNAME }}/backend:$TAG
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H FRONTEND_INSTANCE_PUBLIC_IP >> ~/.ssh/known_hosts
+          ssh-keyscan -H BACKEND_INSTANCE_PRIVATE_IP >> ~/.ssh/known_hosts
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # SSH into your backend EC2 instance and deploy the backend container
-      - name: Deploy backend to EC2 instance
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.BACKEND_EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: |
-            docker stop backend || true
-            docker rm backend || true
-            docker pull your-dockerhub-username/backend:$TAG
-            docker run -d -p 8080:8080 --name backend your-dockerhub-username/backend:$TAG
+      - name: SSH into Frontend and Deploy Backend Docker Image
+        run: |
+          ssh -i ~/.ssh/id_rsa ec2-user@FRONTEND_INSTANCE_PUBLIC_IP << EOF
+            ssh -i /path/to/private/key/on/frontend ec2-user@BACKEND_INSTANCE_PRIVATE_IP << 'INNER_SSH'
+              # Docker login if required
+              # docker login -u YOUR_DOCKER_USERNAME -p YOUR_DOCKER_PASSWORD
+
+              # Pull and run Docker image on the backend instance
+              docker pull YOUR_DOCKER_IMAGE
+              docker run -d --name backend_container -p 8080:8080 YOUR_DOCKER_IMAGE
+            INNER_SSH
+          EOF
