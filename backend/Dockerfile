@@ -5,17 +5,17 @@ FROM openjdk:11-jdk AS build
 WORKDIR /app
 
 # Copy Maven wrapper
-COPY ../mvnw .
-COPY ../.mvn .mvn
+COPY mvnw .
+COPY .mvn .mvn
 
 # Copy project descriptor files
-COPY ../pom.xml .
+COPY pom.xml .
 
 # Download dependencies and plugins
 RUN ./mvnw dependency:go-offline
 
 # Copy the rest of the source code
-COPY ../src src
+COPY src src
 
 # Build application
 RUN ./mvnw package -DskipTests
