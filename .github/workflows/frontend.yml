@@ -30,8 +30,7 @@ jobs:
       - name: Build and push frontend Docker image
         env:
           TAG: ${{ github.sha }}
-        run: |
-          cd frontend  
+        run: | 
           docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG  -f frontend/Dockerfile .
           docker push ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
 
