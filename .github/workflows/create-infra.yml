@@ -20,21 +20,10 @@ jobs:
           cd infrastructure
           ls -l  # List contents of infrastructure directory for verification
           pwd    # Print current working directory for verification
-
-          # Set up Terraform with backend configuration
-          terraform init \
-            -backend-config="bucket=kalim-terraform-backend" \
-            -backend-config="key=terraform.tfstate" \
-            -backend-config="region=eu-west-1"
-
-          # Apply Terraform changes and save output to output.json
-          terraform apply -auto-approve -json > ../output.json
+          # Set up Terraform
+          terraform init
+          # Apply Terraform changes
+          terraform apply -auto-approve > ../output.json
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Upload output.json
-        uses: actions/upload-artifact@v2
-        with:
-          name: terraform-output
-          path: output.json
