@@ -1,0 +1,48 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - backend/**
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Docker CLI
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Login to Docker Hub or another registry where you push images
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build and push Docker image for backend
+      - name: Build and push backend Docker image
+        env:
+          TAG: ${{ github.sha }}
+        run: |
+          docker build -t obifrankie/backend:$TAG -f backend/Dockerfile ./backend
+          docker push obifrankie/backend:$TAG
+
+      # SSH into your backend EC2 instance and deploy the backend container
+      - name: Deploy backend to EC2 instance
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.BACKEND_EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            docker stop backend || true
+            docker rm backend || true
+            docker pull your-dockerhub-username/backend:$TAG
+            docker run -d -p 8080:8080 --name backend your-dockerhub-username/backend:$TAG
