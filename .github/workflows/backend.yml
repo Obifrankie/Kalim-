@@ -31,7 +31,8 @@ jobs:
         env:
           TAG: ${{ github.sha }}
         run: |
-          docker build -t obifrankie/backend:$TAG -f backend/Dockerfile ./backend
+          cd backend
+          docker build -t obifrankie/backend:$TAG .
           docker push obifrankie/backend:$TAG
 
       # SSH into your backend EC2 instance and deploy the backend container
