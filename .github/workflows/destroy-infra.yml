@@ -1,0 +1,35 @@
+name: Terraform Destroy
+
+on:
+  workflow_dispatch:
+    
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Change to infrastructure directory
+        run: cd infrastructure
+
+      - name: Initialize Terraform with remote backend
+        run: |
+          terraform init -input=false \
+            -backend-config="bucket=kalim-terraform-backend" \
+            -backend-config="key=terraform.tfstate" \
+            -backend-config="region=eu-west-1" \
+            -backend-config="profile=default"
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
+
+      - name: Save Terraform state after destroy
+        run: terraform state pull > ../destroyed_tf_state.json
+
+      - name: Upload destroyed_tf_state.json
+        uses: actions/upload-artifact@v2
+        with:
+          name: destroyed-terraform-state
+          path: destroyed_tf_state.json

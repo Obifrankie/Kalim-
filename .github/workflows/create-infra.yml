@@ -21,8 +21,12 @@ jobs:
           ls -l  # List contents of infrastructure directory for verification
           pwd    # Print current working directory for verification
 
-          # Set up Terraform
-          terraform init
+          # Set up Terraform with backend configuration
+          terraform init \
+            -backend-config="bucket=kalim-terraform-backend" \
+            -backend-config="key=terraform.tfstate" \
+            -backend-config="region=eu-west-1" \
+            -backend-config="profile=default"
 
           # Apply Terraform changes and save output to output.json
           terraform apply -auto-approve -json > ../output.json
