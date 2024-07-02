@@ -1,8 +1,11 @@
+# Launch Configuration for Frontend
 resource "aws_launch_configuration" "frontend_lc" {
   name            = var.frontend_lc_name
   image_id        = var.image_id
+  key_name      = "BlueMoon.pem" 
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.frontend_sg.id]
+  associate_public_ip_address = true  # Ensure public IP address is associated
 
   # user_data = <<-EOF
   #             #!/bin/bash
@@ -21,6 +24,7 @@ resource "aws_launch_configuration" "backend_lc" {
   image_id        = var.image_id
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.backend_sg.id]
+  associate_public_ip_address = false  # Backend instances do not need public IP
 
   # user_data = <<-EOF
   #             #!/bin/bash
@@ -39,7 +43,7 @@ resource "aws_autoscaling_group" "frontend_asg" {
   min_size             = 1
   max_size             = 1
   desired_capacity     = 1
-  vpc_zone_identifier  = [aws_subnet.public_subnet_1.id]
+  vpc_zone_identifier  = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]  # Include both public subnets
 
   tag {
     key                 = "Name"
@@ -54,7 +58,7 @@ resource "aws_autoscaling_group" "backend_asg" {
   min_size             = 1
   max_size             = 1
   desired_capacity     = 1
-  vpc_zone_identifier  = [aws_subnet.private_subnet_1.id]
+  vpc_zone_identifier  = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]  # Include both private subnets
 
   tag {
     key                 = "Name"
