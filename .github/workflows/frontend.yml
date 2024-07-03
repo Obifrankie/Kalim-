@@ -42,7 +42,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            docker stop frontend || true
-            docker rm frontend || true
-            docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
-            docker run -d -p 80:80 --name frontend ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
+            sudo docker stop frontend || true
+            sudo docker rm frontend || true
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
+            sudo docker run -d -p 80:80 --name frontend ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
