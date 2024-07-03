@@ -1,11 +1,12 @@
 name: Terraform
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - infrastructure/**
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - infrastructure/**
 
 jobs:
   deploy:
