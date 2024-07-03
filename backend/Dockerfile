@@ -1,37 +1,14 @@
-# Use OpenJDK 11 as base image
-FROM openjdk:11-jdk AS build
-
-# Set working directory
-WORKDIR /app
-
-# Copy Maven wrapper and project descriptor files
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
-
-# Download dependencies and plugins
-RUN ./mvnw dependency:go-offline
-
-# Copy the rest of the backend source code
-COPY src src
-
-# Build the backend application
-RUN ./mvnw package -DskipTests
-
-# Stage 2 - Create the final image
+# Use a base image with Java runtime
 FROM openjdk:11-jre-slim
 
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the built JAR file from the build stage
-COPY --from=build /app/target/*.jar app.jar
+# Copy the generated JAR file to the working directory
+COPY target/react-and-spring-data-rest-*.jar app.jar
 
-# Copy frontend build artifacts into a directory
-COPY frontend/build /app/frontend
-
-# Expose port 8080
+# Expose the application port
 EXPOSE 8080
 
-# Command to run the Spring Boot application
-CMD ["java", "-jar", "app.jar"]
+# Command to run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
