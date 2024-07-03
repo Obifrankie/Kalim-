@@ -20,17 +20,17 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H FRONTEND_INSTANCE_PUBLIC_IP >> ~/.ssh/known_hosts
-          ssh-keyscan -H BACKEND_INSTANCE_PRIVATE_IP >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.FRONTEND_INSTANCE_PUBLIC_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.BACKEND_INSTANCE_PUBLIC_IP }} >> ~/.ssh/known_hosts
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: SSH into Frontend and Deploy Backend Docker Image
         run: |
-          ssh -i ~/.ssh/id_rsa ec2-user@FRONTEND_INSTANCE_PUBLIC_IP << EOF
-            ssh -i /path/to/private/key/on/frontend ec2-user@BACKEND_INSTANCE_PRIVATE_IP << 'INNER_SSH'
-              # Docker login if required
-              # docker login -u YOUR_DOCKER_USERNAME -p YOUR_DOCKER_PASSWORD
+          ssh -i ~/.ssh/id_rsa ${{ secrets.EC2_USERNAME }}@${{ secrets.FRONTEND_INSTANCE_PUBLIC_IP }} << EOF
+            ssh -i /path/to/private/key/on/frontend ${{ secrets.EC2_USERNAME }}@${{ secrets.BACKEND_INSTANCE_PUBLIC_IP }} << 'INNER_SSH'
+              
+               docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
               # Pull and run Docker image on the backend instance
               docker pull YOUR_DOCKER_IMAGE
