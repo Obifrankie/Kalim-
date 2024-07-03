@@ -1,4 +1,4 @@
-# Launch Configuration for Frontend
+# Launch Configuration for Frontend# Launch Configuration for Frontend
 resource "aws_launch_configuration" "frontend_lc" {
   name            = var.frontend_lc_name
   image_id        = var.image_id
@@ -7,11 +7,50 @@ resource "aws_launch_configuration" "frontend_lc" {
   security_groups = [aws_security_group.frontend_sg.id]
   associate_public_ip_address = true  # Ensure public IP address is associated
 
-  # user_data = <<-EOF
-  #             #!/bin/bash
-  #             yum update -y
-  #             
-  #             EOF
+  user_data = <<-EOF
+                #!/bin/bash
+                sudo apt-get update
+                sudo apt-get install -y ca-certificates curl
+                sudo install -m 0755 -d /etc/apt/keyrings
+                sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+                sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+                # Add the repository to Apt sources
+                echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+                sudo apt-get update
+                sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+                EOF
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
+# Launch Configuration for Backend
+resource "aws_launch_configuration" "backend_lc" {
+  name            = var.backend_lc_name
+  image_id        = var.image_id
+  key_name        = aws_key_pair.generated_key_pair.key_name 
+  instance_type   = "t2.micro"
+  security_groups = [aws_security_group.backend_sg.id]
+  associate_public_ip_address = true  # Ensure public IP address is associated
+
+  user_data = <<-EOF
+                #!/bin/bash
+                sudo apt-get update
+                sudo apt-get install -y ca-certificates curl
+                sudo install -m 0755 -d /etc/apt/keyrings
+                sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+                sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+                # Add the repository to Apt sources
+                echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+                sudo apt-get update
+                sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+                EOF
 
   lifecycle {
     create_before_destroy = true
@@ -19,18 +58,18 @@ resource "aws_launch_configuration" "frontend_lc" {
 }
 
 # Launch Configuration for Backend
-resource "aws_launch_configuration" "backend_lc" {
-  name            = var.backend_lc_name
-  image_id        = var.image_id
-  key_name        = aws_key_pair.generated_key_pair.key_name
-  instance_type   = "t2.micro"
-  security_groups = [aws_security_group.backend_sg.id]
-  associate_public_ip_address = true  # Ensure public IP address is associated
+# resource "aws_launch_configuration" "backend_lc" {
+#   name            = var.backend_lc_name
+#   image_id        = var.image_id
+#   key_name        = aws_key_pair.generated_key_pair.key_name
+#   instance_type   = "t2.micro"
+#   security_groups = [aws_security_group.backend_sg.id]
+#   associate_public_ip_address = true  # Ensure public IP address is associated
 
-  lifecycle {
-    create_before_destroy = true
-  }
-}
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }
 
 # Auto Scaling Group for Frontend
 resource "aws_autoscaling_group" "frontend_asg" {
