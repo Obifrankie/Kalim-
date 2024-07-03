@@ -13,7 +13,7 @@ resource "aws_subnet" "public_subnet_1" {
   vpc_id            = aws_vpc.main_vpc.id
   cidr_block        = var.subnet_cidr_blocks[0]
   availability_zone = var.availability_zones[0]
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = true  # Ensure instances in this subnet get a public IP
 
   tags = {
     Name = "public_subnet_1"
@@ -23,39 +23,13 @@ resource "aws_subnet" "public_subnet_1" {
 resource "aws_subnet" "public_subnet_2" {
   vpc_id            = aws_vpc.main_vpc.id
   cidr_block        = var.subnet_cidr_blocks[1]
-  availability_zone = var.availability_zones[1] 
-  map_public_ip_on_launch = true
+  availability_zone = var.availability_zones[1]
+  map_public_ip_on_launch = true  # Ensure instances in this subnet get a public IP
 
   tags = {
     Name = "public_subnet_2"
   }
 }
-
-
-resource "aws_subnet" "private_subnet_1" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = var.subnet_cidr_blocks[2]
-  availability_zone = var.availability_zones[0] 
-  map_public_ip_on_launch = true
-
-
-  tags = {
-    Name = "private_subnet_1"
-  }
-}
-
-resource "aws_subnet" "private_subnet_2" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = var.subnet_cidr_blocks[3]
-  availability_zone = var.availability_zones[1]
-  map_public_ip_on_launch = true
-
-
-  tags = {
-    Name = "private_subnet_2"
-  }
-}
-
 
 # Internet Gateway
 resource "aws_internet_gateway" "main_igw" {
@@ -63,24 +37,6 @@ resource "aws_internet_gateway" "main_igw" {
 
   tags = {
     Name = var.internet_gateway_name
-  }
-}
-
-# NAT Gateway
-resource "aws_eip" "nat_eip" {
-  # domain = "vpc"
-
-  tags = {
-    Name = var.nat_gateway_name
-  }
-}
-
-resource "aws_nat_gateway" "main_nat_gw" {
-  allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public_subnet_1.id
-
-  tags = {
-    Name = var.nat_gateway_name
   }
 }
 
@@ -98,41 +54,13 @@ resource "aws_route_table" "public_rt" {
   }
 }
 
-resource "aws_route_table" "private_rt" {
-  vpc_id = aws_vpc.main_vpc.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main_nat_gw.id
-  }
-
-  tags = {
-    Name = var.private_route_table_name
-  }
-}
-
 # Route Table Associations
 resource "aws_route_table_association" "public_rt_assoc_1" {
-  # count           = 2 
   subnet_id      = aws_subnet.public_subnet_1.id
   route_table_id = aws_route_table.public_rt.id
 }
 
 resource "aws_route_table_association" "public_rt_assoc_2" {
-  # count           = 2 
-  subnet_id      = aws_subnet.public_subnet_2.id
-  route_table_id = aws_route_table.public_rt.id
-}
-
-
-resource "aws_route_table_association" "private_rt_assoc_2" {
-  # count           = 2  
-  subnet_id      = aws_subnet.public_subnet_1.id
-  route_table_id = aws_route_table.public_rt.id
-}
-
-resource "aws_route_table_association" "private_rt_assoc_1" {
-  # count           = 2  
   subnet_id      = aws_subnet.public_subnet_2.id
   route_table_id = aws_route_table.public_rt.id
 }
@@ -174,14 +102,14 @@ resource "aws_security_group" "backend_sg" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]  # Allowing HTTP traffic from within the VPC
+    cidr_blocks = ["0.0.0.0/0"]  # Allowing HTTP traffic from anywhere
   }
 
-  ingress {
-    from_port       = 22  # Allow SSH
-    to_port         = 22
-    protocol        = "tcp"
-    security_groups = [aws_security_group.frontend_sg.id]  # Allow SSH from frontend security group
+ ingress {
+    from_port   = 22  # Allow SSH
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
