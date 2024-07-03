@@ -44,5 +44,5 @@ jobs:
           script: |
             docker stop frontend || true
             docker rm frontend || true
-            docker pull your-dockerhub-username/frontend:$TAG
-            docker run -d -p 80:80 --name frontend your-dockerhub-username/frontend:$TAG
+            docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
+            docker run -d -p 80:80 --name frontend ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG
