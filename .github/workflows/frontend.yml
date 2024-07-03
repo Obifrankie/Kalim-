@@ -31,7 +31,7 @@ jobs:
         env:
           TAG: ${{ github.sha }}
         run: | 
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:$TAG  -f frontend/Dockerfile .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest -f frontend/Dockerfile .
           docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
 
       # SSH into your frontend EC2 instance and deploy the frontend container
