@@ -212,3 +212,13 @@ To destroy the whole infrastructure just manually trigger the destroy0infra.yml 
 - This would automatically destroy all the infrastructure 
 
 
+
+
+
+
+
+## MONITORING
+
+To monitor the instances I wrote an ansiblee playbook to setup cloudwatch on the instances but since I need to copy ssh keys to the instance for ansible to be able to ssh to the instance I will not implement the ansible steps fully because it involves some manual processes and I am more focused on automation with this project. 
+
+I can fully optimize the ansible playbook in one more iteration.
