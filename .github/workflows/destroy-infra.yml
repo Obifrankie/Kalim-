@@ -1,35 +1,41 @@
-name: Terraform Destroy
+name: Terraform
 
 on:
   workflow_dispatch:
-    
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - infrastructure/**
+
 jobs:
-  destroy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Change to infrastructure directory
-        run: cd infrastructure
-
-      - name: Initialize Terraform with remote backend
+      - name: Change directory and run Terraform commands
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-west-1
         run: |
-          terraform init -input=false \
-            -backend-config="bucket=kalim-terraform-backend" \
-            -backend-config="key=terraform.tfstate" \
-            -backend-config="region=eu-west-1" \
-            -backend-config="profile=default"
+          cd infrastructure
+          ls -l  # List contents of infrastructure directory for verification
+          pwd    # Print current working directory for verification
 
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve
+          # Set up Terraform with backend configuration
+          rm -rf .terraform
+          terraform init -backend-config=pipeline.tfvars -upgrade=true -no-color -input=false
 
-      - name: Save Terraform state after destroy
-        run: terraform state pull > ../destroyed_tf_state.json
+          # Apply Terraform changes and save output to output.json
+          terraform destroy -auto-approve -json > ../destroy.json
+        
 
-      - name: Upload destroyed_tf_state.json
+      - name: Upload destroy.json
         uses: actions/upload-artifact@v2
         with:
-          name: destroyed-terraform-state
-          path: destroyed_tf_state.json
+          name: terraform-destroy
+          path: destroy.json
