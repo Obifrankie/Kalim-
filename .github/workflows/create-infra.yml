@@ -26,7 +26,8 @@ jobs:
           pwd    # Print current working directory for verification
 
           # Set up Terraform with backend configuration
-          terraform init -backend-config=pipeline.tfvars
+          rm -rf .terraform
+          terraform init -backend-config=pipeline.tfvars -upgrade=true -no-color -input=false
 
           # Apply Terraform changes and save output to output.json
           terraform apply -auto-approve -json > ../output.json
