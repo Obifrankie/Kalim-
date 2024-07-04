@@ -23,12 +23,12 @@ jobs:
           pwd    # Print current working directory for verification
 
           # Set up Terraform with backend configuration
-          terraform init
+          terraform init -backend-config=pipeline.tfvars
 
           # Apply Terraform changes and save output to output.json
           terraform apply -auto-approve -json > ../output.json
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_IDDD }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Upload output.json
