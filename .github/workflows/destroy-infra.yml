@@ -28,7 +28,7 @@ jobs:
 
           # Set up Terraform with backend configuration
           rm -rf .terraform
-          terraform init -backend-config=pipeline.tfvars -upgrade=true -no-color -input=false
+          terraform init 
 
           # Apply Terraform changes and save output to output.json
           terraform destroy -auto-approve -json > ../destroy.json
