@@ -101,7 +101,7 @@ I want for the second option which is use a EC2 instances with Auto-Scaling and 
 
 - DEPLOY BACKEND APPLICATION 
 
-_ DEPLOY FRONT END APPLICATION 
+- DEPLOY FRONT END APPLICATION 
 
 
 STEPS TO DEPLOY THE APPLICATION
