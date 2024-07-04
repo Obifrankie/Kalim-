@@ -10,10 +10,10 @@ resource "aws_vpc" "main_vpc" {
 # Subnets in different Availability Zones
 
 resource "aws_subnet" "public_subnet_1" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = var.subnet_cidr_blocks[0]
-  availability_zone = var.availability_zones[0]
-  map_public_ip_on_launch = true  # Ensure instances in this subnet get a public IP
+  vpc_id                  = aws_vpc.main_vpc.id
+  cidr_block              = var.subnet_cidr_blocks[0]
+  availability_zone       = var.availability_zones[0]
+  map_public_ip_on_launch = true # Ensure instances in this subnet get a public IP
 
   tags = {
     Name = "public_subnet_1"
@@ -21,10 +21,10 @@ resource "aws_subnet" "public_subnet_1" {
 }
 
 resource "aws_subnet" "public_subnet_2" {
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = var.subnet_cidr_blocks[1]
-  availability_zone = var.availability_zones[1]
-  map_public_ip_on_launch = true  # Ensure instances in this subnet get a public IP
+  vpc_id                  = aws_vpc.main_vpc.id
+  cidr_block              = var.subnet_cidr_blocks[1]
+  availability_zone       = var.availability_zones[1]
+  map_public_ip_on_launch = true # Ensure instances in this subnet get a public IP
 
   tags = {
     Name = "public_subnet_2"
@@ -77,7 +77,7 @@ resource "aws_security_group" "frontend_sg" {
   }
 
   ingress {
-    from_port   = 22  # Allow SSH
+    from_port   = 22 # Allow SSH
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
@@ -102,11 +102,11 @@ resource "aws_security_group" "backend_sg" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Allowing HTTP traffic from anywhere
+    cidr_blocks = ["0.0.0.0/0"] # Allowing HTTP traffic from anywhere
   }
 
- ingress {
-    from_port   = 22  # Allow SSH
+  ingress {
+    from_port   = 22 # Allow SSH
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
