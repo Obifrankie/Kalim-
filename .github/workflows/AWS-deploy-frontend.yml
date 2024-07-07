@@ -1,7 +1,7 @@
 name: Deploy Frontend to AWS
 
 on:
-  push:
+  workflow_dispatch:
     # branches:
     #   - main
     # paths:
