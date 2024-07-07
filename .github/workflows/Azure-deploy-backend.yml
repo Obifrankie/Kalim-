@@ -15,13 +15,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Extract backend LB public IP address
-        id: extract-ip
-        run: |
-          cd Azure-infra
-          BACKEND_LB_PUB_IP=$(jq -r '.backend_lb_public_ip_address.value' tf_output.json)
-          echo "BACKEND_LB_PUB_IP=$BACKEND_LB_PUB_IP" >> $GITHUB_ENV
-
       - name: Check server availability
         id: check-server
         run: |
