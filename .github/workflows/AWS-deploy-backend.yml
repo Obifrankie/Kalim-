@@ -1,11 +1,11 @@
-name: Deploy Backend Application
+name: Deploy Backend to AWS
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - backend/**  # This ensures the pipeline runs when any file in the backend directory changes
+    # branches:
+    #   - main
+    # paths:
+    #   - backend/**  
 
 jobs:
   build-and-deploy:
@@ -34,7 +34,7 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:${{ secrets.TAG }} -f backend/Dockerfile .
           docker push ${{ secrets.DOCKER_USERNAME }}/backend:${{ secrets.TAG }}
 
-      # SSH into your backend EC2 instance and deploy the backend container
+      # SSH into backend EC2 instance and deploy the backend container
       - name: Deploy backend to EC2 instance
         uses: appleboy/ssh-action@master
         with:

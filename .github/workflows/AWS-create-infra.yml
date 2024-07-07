@@ -1,4 +1,4 @@
-name: Destroy Infrastructure Terraform
+name: Destroy Infrastructure to AWS
 
 on:
   workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          cd infrastructure
+          cd Aws-infra
           ls -l  # List contents of infrastructure directory for verification
           pwd    # Print current working directory for verification
 

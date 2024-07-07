@@ -1,4 +1,4 @@
-name: Deploy Frontend Application
+name: Deploy Frontend to Azure
 
 on:
   push:
@@ -34,12 +34,12 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:${{ secrets.TAG }} -f frontend/Dockerfile .
           docker push ${{ secrets.DOCKER_USERNAME }}/frontend:${{ secrets.TAG }}
 
-      # SSH into your frontend EC2 instance and deploy the frontend container
+      # SSH into  VM frontend instance and deploy the frontend container
       - name: Deploy frontend to EC2 instance
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.FRONTEND_EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
+          host: ${{ secrets.FRONTEND_LB_PUB_IP }}
+          username: ${{ secrets.VM_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             sudo docker stop frontend || true
