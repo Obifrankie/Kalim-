@@ -18,7 +18,7 @@ jobs:
       - name: Check server availability
         id: check-server
         run: |
-          if ! ping -c 4 13.90.155.53; then
+          if ! ping -c 4 ${{ secrets.BACKEND_LB_PUB_IP }}; then
             echo "Backend Server not available please run the Azure-deploy-backend.yml pipeline"
             exit 1
           fi
