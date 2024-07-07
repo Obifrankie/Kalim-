@@ -41,6 +41,7 @@ jobs:
           host: ${{ secrets.FRONTEND_LB_PUB_IP }}
           username: ${{ secrets.VM_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
+          port: ${{ secrets.FRONTEND_PORT }}
           script: |
             sudo docker stop frontend || true
             sudo docker rm frontend || true
