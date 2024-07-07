@@ -124,7 +124,7 @@
 
 # Public IP for Load Balancer
 resource "azurerm_public_ip" "frontend_lb_pip" {
-  name                = "frontend-lb-pip"
+  name                = var.frontend_lb_pip_name
   location            = azurerm_resource_group.main_rg.location
   resource_group_name = azurerm_resource_group.main_rg.name
   allocation_method   = "Static"
@@ -132,7 +132,7 @@ resource "azurerm_public_ip" "frontend_lb_pip" {
 }
 
 resource "azurerm_public_ip" "backend_lb_pip" {
-  name                = "backend-lb-pip"
+  name                = var.backend_lb_pip_name
   location            = azurerm_resource_group.main_rg.location
   resource_group_name = azurerm_resource_group.main_rg.name
   allocation_method   = "Static"
@@ -141,7 +141,7 @@ resource "azurerm_public_ip" "backend_lb_pip" {
 
 # Load Balancer for Frontend
 resource "azurerm_lb" "frontend_lb" {
-  name                = "frontend-lb"
+  name                = var.frontend_lb_name
   location            = azurerm_resource_group.main_rg.location
   resource_group_name = azurerm_resource_group.main_rg.name
   sku                 = "Standard"
@@ -154,7 +154,7 @@ resource "azurerm_lb" "frontend_lb" {
 
 # Load Balancer for Backend
 resource "azurerm_lb" "backend_lb" {
-  name                = "backend-lb"
+  name                = var.backend_lb_name
   location            = azurerm_resource_group.main_rg.location
   resource_group_name = azurerm_resource_group.main_rg.name
   sku                 = "Standard"

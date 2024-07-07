@@ -15,6 +15,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Extract backend LB public IP address
+        id: extract-ip
+        run: |
+          cd Azure-infra
+          BACKEND_LB_PUB_IP=$(jq -r '.backend_lb_public_ip_address.value' tf_output.json)
+          echo "BACKEND_LB_PUB_IP=$BACKEND_LB_PUB_IP" >> $GITHUB_ENV
+
+      - name: Check server availability
+        id: check-server
+        run: |
+          if ! ping -c 4 ${{ secrets.BACKEND_LB_PUB_IP }}; then
+            echo "Backend Server not available please run the Azure-deploy-backend.yml pipeline"
+            exit 1
+          fi
+
       # Set up Docker CLI
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1

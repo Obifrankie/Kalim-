@@ -39,4 +39,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: terraform-state
-          path: infrastructure/terraform.tfstate
+          path: Azure-infra/terraform.tfstate

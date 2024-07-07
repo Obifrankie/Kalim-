@@ -1,3 +1,0 @@
-sjsj
-nsnn
-ksks

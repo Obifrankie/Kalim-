@@ -29,24 +29,24 @@ resource "azurerm_subnet" "subnet_2" {
   
 }
 
-# Network Security Group for VM1
-resource "azurerm_network_security_group" "nsg_vm1" {
-  name                = "nsg-vm1"
-  location            = azurerm_resource_group.main_rg.location
-  resource_group_name = azurerm_resource_group.main_rg.name
+# # Network Security Group for VM1
+# resource "azurerm_network_security_group" "nsg_vm1" {
+#   name                = "nsg-vm1"
+#   location            = azurerm_resource_group.main_rg.location
+#   resource_group_name = azurerm_resource_group.main_rg.name
 
-  security_rule {
-    name                       = "Allow-SSH-HTTP"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_ranges    = ["22", "80"]
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-}
+#   security_rule {
+#     name                       = "Allow-SSH-HTTP"
+#     priority                   = 100
+#     direction                  = "Inbound"
+#     access                     = "Allow"
+#     protocol                   = "Tcp"
+#     source_port_range          = "*"
+#     destination_port_ranges    = ["22", "80"]
+#     source_address_prefix      = "*"
+#     destination_address_prefix = "*"
+#   }
+# }
 
 # # Network Security Group for VM2
 # resource "azurerm_network_security_group" "nsg_vm2" {

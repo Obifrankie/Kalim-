@@ -1,0 +1,12 @@
+{
+  "backend_lb_public_ip_address": {
+    "sensitive": false,
+    "type": "string",
+    "value": "13.90.155.53"
+  },
+  "frontend_lb_public_ip_address": {
+    "sensitive": false,
+    "type": "string",
+    "value": "13.90.155.67"
+  }
+}

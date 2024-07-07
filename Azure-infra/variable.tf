@@ -43,3 +43,29 @@ variable "admin_password" {
   default     = "P@ssw0rd1234!"
 }
 
+variable "frontend_lb_pip_name" {
+  description = "The name of the public IP address"
+  type        = string
+  default = "frontend-lb-pip"
+}
+
+variable "backend_lb_pip_name" {
+  description = "The name of the public IP address"
+  type        = string
+  default = "backend-lb-pip"
+}
+
+variable "frontend_lb_name" {
+  description = "The name of the public IP address"
+  type        = string
+  default = "frontend-lb"
+}
+
+variable "backend_lb_name" {
+  description = "The name of the public IP address"
+  type        = string
+  default = "backend-lb"
+}
+
+
+
