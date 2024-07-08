@@ -102,13 +102,16 @@ To manually try and SSH into the server from your local environment or computer 
 4) Azure-destroy-infra.yml **Only run this pipeline when you want to destroy the wwhole infrastructure**
 
 
-1) **Azure-create-infra.yml** This pipeline deploys the Infrastructure to Azure. This pipeline watches and monitores the Azure-infra/ folder and automatically deploys based on changes to that folder but I disabled the automatic deploy because I felt this might led to some issues down the line especially with this being the main branch. So to deploy changes or create an infrastructure you must tigger the Pipeline manually. You can as well re-enable automatic deploy by removing the comments on the push on branch in the  Azure-create-infra.yml.
+**Azure-create-infra.yml** This pipeline deploys the Infrastructure to Azure. This pipeline watches and monitores the Azure-infra/ folder and automatically deploys based on changes to that folder but I disabled the automatic deploy because I felt this might led to some issues down the line especially with this being the main branch. So to deploy changes or create an infrastructure you must tigger the Pipeline manually. You can as well re-enable automatic deploy by removing the comments on the push on branch in the  Azure-create-infra.yml.
 
-2) **Azure-deploy-backend.yml** This pipeline automatically runs whenever there is a change in the Backend/ folder this is where the dockerfile to deploy the backend is stored. So whenever there is a change in this follder it would trigger the deployment of a new image. I added a readme.md file in this directory so you can write anything into that readme.md and it would automatically trigger a release of a new backend image 
 
-3) **Azure-deploy-frontend.yml** this pipeline automatically runs whenever there is a change in the frontend/ folder this is where the dockerfile to deploy the backend is stored. So whenever there is a change in this follder it would trigger the deployment of a new image. I added a readme.md file in this directory so you can write anything into that readme.md and it would automatically trigger a release of a new frontend image 
+**Azure-deploy-backend.yml** This pipeline automatically runs whenever there is a change in the Backend/ folder this is where the dockerfile to deploy the backend is stored. So whenever there is a change in this follder it would trigger the deployment of a new image. I added a readme.md file in this directory so you can write anything into that readme.md and it would automatically trigger a release of a new backend image 
 
-4) **Azure-destroy-infra.yml** this pipeline only destroys the whole infrastructure. It uses a manual trigger so you would have to trigger it manually and it would destroy the whole infrastructure.
+
+**Azure-deploy-frontend.yml** this pipeline automatically runs whenever there is a change in the frontend/ folder this is where the dockerfile to deploy the backend is stored. So whenever there is a change in this follder it would trigger the deployment of a new image. I added a readme.md file in this directory so you can write anything into that readme.md and it would automatically trigger a release of a new frontend image 
+
+
+**Azure-destroy-infra.yml** this pipeline only destroys the whole infrastructure. It uses a manual trigger so you would have to trigger it manually and it would destroy the whole infrastructure.
 
 
 
