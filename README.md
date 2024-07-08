@@ -83,7 +83,7 @@ To manually try and SSH into the server from your local environment or computer 
 
 ***part to private key***  the part to the private key
 
-***p** this flag is used to specify a port 
+***p*** this flag is used to specify a port 
 
 ***frontendport/range*** this is the port on the load balancer
 
