@@ -120,6 +120,8 @@ To manually try and SSH into the server from your local environment or computer 
 ### NOTE STEPS TO DEPLOY THE INFRASTRUCTURE AND APPLICATION WILL BE EXPLAINED FURTHER BELOW
 
  #### Update Azure-infra/backend.tf with you desired parameters
+ We need to properly configure backend.tf for terraform can use a remote backend. We do this update in the Azure-infra/backend.tf below are the required parameters to update in the Azure-infra/backend.tf
+ 
 - **resource_group_name** this is the name of the resorces group you want to store your terraform state file. It does not have to be the same resources group the project is using (I advice you use a different resource group so the lifecycle of the terraform state with not be the same as the lifecycle of the project)
 
 - **storage_account_name** this is the name you want to give the storage account 
