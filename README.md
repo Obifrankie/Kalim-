@@ -150,7 +150,7 @@ We are also going to setup our pipeline to authenticate into Azure but jsut to b
 
 So to setup your local environment to authenticate against your tenant.
 - run ```az login```
-- 
+  
 - run ``` az account show``` to confirm the account 
 
 
@@ -161,7 +161,7 @@ If you happen to have full access to Microsoft Entra ID we are going to create a
 Below are the steps to configure the service principal for the pipelines 
 
 - run ```az login```
-- 
+  
 - run ```az ad sp create-for-rbac --name "myServicePrincipal" --role contributor --scopes /subscriptions/<your-subscription-id> --sdk-auth```
 
 please update the following values in the command above with your own desired values 
