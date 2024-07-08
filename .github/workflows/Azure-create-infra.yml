@@ -36,7 +36,7 @@ jobs:
 
           # Set up Terraform with Azure backend configuration
           rm -rf .terraform
-          # terraform init 
+          terraform init 
 
           # Apply Terraform changes
           terraform apply -auto-approve
