@@ -28,8 +28,7 @@
   },
   "scripts": {
     "watch": "webpack --watch -d --output ./target/classes/static/built/bundle.js",
-    "build": "webpack --mode production --output ./target/classes/static/built/bundle.js"
-  },
+    "build": "webpack --mode production --output-path ./app/build"  },
   "devDependencies": {
     "@babel/core": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
