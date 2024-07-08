@@ -36,7 +36,7 @@ jobs:
 
           # Set up Terraform with Azure backend configuration
           rm -rf .terraform
-          terraform init 
+          terraform init -backend-config="client_id=${AZURE_CLIENT_ID}" -backend-config="client_secret=${AZURE_CLIENT_SECRET}" -backend-config="subscription_id=${AZURE_SUBSCRIPTION_ID}" -backend-config="tenant_id=${AZURE_TENANT_ID}"
 
           # Apply Terraform changes
           terraform apply -auto-approve
