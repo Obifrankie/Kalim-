@@ -133,7 +133,7 @@ The following values below should be manual created in the Azure portal then the
 
 - **key** tis is the name of the terraform state file itself the default name most organization use is *terraform.tfstate*
 
-***If the pipeline is configured properly and set up to authenticate with azure all you need to do is update the values as liste above and it would handle the rest but if you can't setup your pipeline to authenticate which is a proper most free teir accounts face. You would need to create the resource group, storage account, bucket manually on the cloud then use the values from the cloud and update the Azure-infra/backend.tf file***
+***You would need to create the resource group, storage account, bucket manually on the cloud then use the values from the cloud and update the Azure-infra/backend.tf file***
 
 #### Create private key 
 To keep the infrastructue as secure as we can. I am not going to attache my own public key to the repo. It is best we create a new public key when deploying. Below are the steps to create a public key and use it in the code 
