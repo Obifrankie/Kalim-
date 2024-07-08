@@ -13,14 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Change directory and run Terraform commands
         run: |
@@ -30,7 +35,7 @@ jobs:
 
           # Set up Terraform with Azure backend configuration
           rm -rf .terraform
-          terraform init -backend-config="client_id=${ARM_CLIENT_ID}" -backend-config="client_secret=${ARM_CLIENT_SECRET}" -backend-config="subscription_id=${ARM_SUBSCRIPTION_ID}" -backend-config="tenant_id=${ARM_TENANT_ID}"
+          terraform init -backend-config="client_id=${AZURE_CLIENT_ID}" -backend-config="client_secret=${AZURE_CLIENT_SECRET}" -backend-config="subscription_id=${AZURE_SUBSCRIPTION_ID}" -backend-config="tenant_id=${AZURE_TENANT_ID}"
 
           # Apply Terraform changes
           terraform destroy -auto-approve
