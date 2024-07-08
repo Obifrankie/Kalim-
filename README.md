@@ -169,7 +169,7 @@ please update the following values in the command above with your own desired va
 ***myServicePrincipal*** this is the name you want to give the service principal  
 
 
-***<your-subscription-id>*** this is the subscription id of the tenant you want to this principal to authenticate against. You can view your subscriptionID by running ```az account show```. This would produce a json output the tenant ID is the value for the ID key.
+***your-subscription-id*** this is the subscription id of the tenant you want to this principal to authenticate against. You can view your subscriptionID by running ```az account show```. This would produce a json output the tenant ID is the value for the ID key.
 
 - Copy the output json of this command and store it we would need it to create our secret values in github
 
