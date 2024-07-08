@@ -117,7 +117,7 @@ To manually try and SSH into the server from your local environment or computer 
 
 # DEPLOY
 
-### NOTE STEPS TO DEPLOY THE APPLICATION WILL EXPLAIN FURTHER BELOW
+### NOTE STEPS TO DEPLOY THE INFRASTRUCTURE AND APPLICATION WILL EXPLAIN FURTHER BELOW
 
  #### Update Azure-infra/backend.tf with you desired parameters
 - **resource_group_name** this is the name of the resorces group you want to store your terraform state file. It does not have to be the same resources group the project is using (I advice you use a different resource group so the lifecycle of the terraform state with not be the same as the lifecycle of the project)
