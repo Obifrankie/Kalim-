@@ -13,7 +13,7 @@ Azure-infra --> BACKEND.TF
 
 AFTER UPDATING Azure-infra/BACKEND.TF PLEASE CONTINUE WITH THE REST OF THE STEPS IN THE README
 
-## familiarise with the Folder structure
+## Familiarise With The Folder structure
 **Backend**
 This folder in the root of the code base houses the dockerfile to build backed images. It also has a readme.md so one can use to quickly write to it and trigger a release
 
