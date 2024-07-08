@@ -77,7 +77,7 @@ Due to the fact that we are using a load balancer to manage the traffic that is 
 
 To manually try and SSH into the server from your local environment or computer using the load balancer please run this code ```ssh -i <part to private key> -p <frontendport/range> <username>@<frontend-lb-pip or backend-lp-pip>```
 
-***ssh*** is the command used to ssh
+***ssh*** is the command used to ssh\n
 ***i*** the i flag is used to specify the part to a private key to use to ssh to the server 
 ***part to private key***  the part to the private key
 ***p** this flag is used to specify a port 
