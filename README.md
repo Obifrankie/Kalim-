@@ -1,226 +1,80 @@
 # PLEASE READ THROUGH THE WHOLEPAGE BEFORE YOU START DEPLOYING THE SOLUTION
 
-#### PLEASE NOTE AS A FIRST STEP I ADVISE THAT YOU FIRST UPDATE YOU DESIRED VALUES IN THE BACKEND.TF THIS IS SO TERRAFORM CAN USE A REMOTE BACKEND FOR THE FILE. THE VALUES THAT WOULD BE PROVIDED ARE SENSITIVE VALUES SO I WILL OT HARD CODE IT IN THE SCRIPT.
+#### PLEASE NOTE AS A FIRST STEP I ADVISE THAT YOU FIRST UPDATE YOU DESIRED VALUES IN THE BACKEND.TF THIS IS SO TERRAFORM CAN USE A REMOTE BACKEND FOR THE FILE. THE VALUES THAT WOULD BE PROVIDED ARE SENSITIVE VALUES SO I WILL NOT HARD CODE IT IN THE SCRIPT.
 
 
- PLEASE MAKE SURE YOU HAVE PROPERLY CONFIGURED BACKEND.TF WITH YOUR DESIRED VALUES TO GET TO BACKEND.TF CLICK ON THE INFRASTRUCTURE FOLDER THEN YOU WOULD SEE BACKEND.TF THEN UPDATE IT WITH YOUR DESIRED CONFIGURATIONS.
+ PLEASE MAKE SURE YOU HAVE PROPERLY CONFIGURED BACKEND.TF in the Azure-infra directory WITH YOUR DESIRED VALUES.
+ TO GET TO BACKEND.TF for the Azure-infra CLICK ON THE Azure-infra FOLDER THEN YOU WOULD SEE BACKEND.TF THEN UPDATE IT WITH YOUR DESIRED CONFIGURATIONS.
 
 #### AGAIN TO GET TO BACKEND.TF THIS IS THE FOLDER STRUCTURE
-INFRASTRUCTURE --> BACKEND.TF
+Azure-infra --> BACKEND.TF
 
-AFTER UPDATING BACKEND.TF PLEASE CONTINUE WITH THE REST OF THE STEPS IN THE README
+AFTER UPDATING Azure-infra/BACKEND.TF PLEASE CONTINUE WITH THE REST OF THE STEPS IN THE README
 
+### NOTE STEPS TO DEPLOY THE APPLICATION WILL EXPLAIN FURTHER BELOW
 
-NOTE STEPS TO DEPLOY THE APPLICATION WILL EXPLAIN FURTHER BELOW
+ #### Update Azure-infra/backend.tf with you desired parameters
+- **resource_group_name** this is the name of the resorces group you want to store your terraform state file. It does not have to be the same resources group the project is using (I advice you use a different resource group so the lifecycle of the terraform state with not be the same as the lifecycle of the project)
 
-- Update backend.tf with you desired parameters
-- In Backend.tf specify the values for the following ;
+- **storage_account_name** this is the name you want to give the storage account 
 
-   bucket this is the name of the s3 bucket where terraform should store the remote backend 
+- **container_name** this is the name of the container 
 
-   key this is the name you want to give the state file. The standard name is terraform.tfstate i suggest you use it as well
+- **key** tis is the name of the terraform state file itself the default name most organization use is *terraform.tfstate*
 
-   region this is the default region you want your resources to deploy to
+***If the pipeline is configured properly and set up to authenticate with azure all you need to do is update the values as liste above and it would handle the rest but if you can't setup your pipeline to authenticate which is a proper most free teir accounts face. You would need to create the resource group, storage account, bucket manually on the cloud then use the values from the cloud and update the Azure-infra/backend.tf file***
 
-   profile this is the default profile terraform should use to create your services in aws
+#### Create private key 
+To keep the infrastructue as secure as we can. I am not going to attache my own public key to the repo. It is best we create a new public key when deploying. Below are the steps to create a public key and use it in the code 
 
-- Create the AWS_ACCESS_KEY_ID secret
-- Create the AWS_SECRET_ACCESS_KEY secret 
-- Create the DOCKER_PASSWORD secret 
-- Create the DOCKER_USERNAME secret 
-- Create the EC2_USERNAME secret (by default this is ubuntu)
-- Create the TAG secret (you can use latest as a default value) 
-- DEPLOY INFRASTRUCTURE 
-- COPY THE IP address of the frontend and and use it to create the FRONTEND_EC2_HOST secret 
-- COPY THE IP address of the backend and and use it to create the BACKEND_EC2_HOST secret 
-- COPY the whole content of the generated-key.pem file and go and use it to create the EC2_PRIVATE_KEY secret
-- DEPLOY THE BACKEND 
-- DEPLOY THE FRONTEND
+- First please pull the repo 
+- change in to the Azure/infra directory in the repo 
+- run ```ssh-keygen -t rsa -b 4096 -f vm``` i suggest not to change the file name and run the code as is so you wont bother with updating the admin-ssh in scale set resource block
 
-To achieve the current deployment, I had two major user story to fulfil 
+The command ablove would create public and private keys called vm.pub and vm respectfully 
 
-- create a CI/CD pipeline for the docker containers.
-- create a pipeline for my terraform scripts.
+#### Sign into Azure 
 
-For the CI/CD pipeline for the docker containers I was provided with some constraints and criteria to try and achieve with the code deployment 
+We are also going to setup our pipeline to authenticate into Azure but jsut to be allow for flexibility. We are also going to login into Azure in our local environment. We are doing this because for most Azure free tier and student accounts we cannot properly configure a pipeline to authenticate to it, this is because they cannot create service principals on the command line. And this is because this type of accounts don't have proper priviledges to Microsoft Entra ID for their tenants.
 
-- To seperate frontend from backend 
-- To make deployment possible across different environments
+So to setup your local environment to authenticate against your tenant.
+- run ```az login```
+- run ``` az account show``` to confirm the account 
 
-For the pipeline for my terraform scripts I was also provided with some constraints and criteria to try and achieve with the deployment 
 
-- To use IaC
-- To allow for multiple personal accounts 
-- To allow the application scale automatically 
+#### Configure a service principal for the pipeline
 
-P.S. you would need to create secret calues in your github secrets
+If you happen to have full access to Microsoft Entra ID we are going to create a service principal. We are doing this so we can get our pipelines to be able to create and destroy infrastructure on our behalf. ***If you dont have full access to Microsoft Entra ID no problem just pull the repo and run the terraform code(terraform init. terraform plan, terraform apply)from your local environment***
 
+Below are the steps to configure the service principal for the pipelines 
 
-![Secret Values](screenshots/image1.png)
+- run ```az login```
+- run ```az ad sp create-for-rbac --name "myServicePrincipal" --role contributor --scopes /subscriptions/<your-subscription-id> --sdk-auth```
 
-- AWS_ACCESS_KEY_ID this is the access key for an AWS user. the pipeline will need it to create the resources on AWS
+please update the following values in the command above with your own desired values 
+***myServicePrincipal*** this is the name you want to give the service principal  
+***<your-subscription-id>*** this is the subscription id of the tenant you want to this principal to authenticate against. You can view your subscriptionID bu running ```az account show```. This would produce a json output the tenant ID is the value for the ID key.
 
-- AWS_SECRET_ACCESS_KEY this is the secret access key for an AWS user. the pipeline will need it to create the resources on AWS
+- Copy the output of this command and store it we would need it to create our secret values in github
 
-- BACKEND_EC2_HOST this is the IP address of the backend instance 
+ #### Configure Pipeline Secret Values 
+ The Next step is to configure the secret values for the pipeline. This what the pipeline would use to authenticate against docker, github, and azure 
 
-- DOCKER_PASSWORD this is the password for a chosen docker hub where the pipeline would push and pull the docker images to/fom
+- Navigate to Settings of this current repo -> Secrets and variables -> Actions.
+- Click on New repository secret and add the following secrets:
+- Create the AZURE_CLIENT_ID secret ***Your Service Principal’s clientId***
+- Create the AZURE_CLIENT_SECRET secret ***Your Service Principal’s clientSecret***
+- Create the AZURE_SUBSCRIPTION_ID secret ***Your Azure Subscription ID***
+- Create the AZURE_TENANT_ID secret ***Your Azure Tenant ID***
+- Create the DOCKER_PASSWORD secret ***Your passowrd for your docker hub***
+- Create the DOCKER_USERNAME secret ***Your username for docker hub***
+- Create the TAG secret ***this is the value you want to use and tag your images you can use latest as a default value**
+- Create the BACKEND_LB_PUB_IP secret ***This is the public Ip of the backend load balancer  you can get it from the Azure console***
+- Create the FRONTEND_LB_PUB_IP secret ***This is the public Ip of the frontend load balancer  you can get it from the Azure console***
+- Create the VM_PRIVATE_KEY secret ***This is the content of the public key in our case the public key is named vm.pub(assuming you left the default values in the Create private key section). Copy the contents of vm.pub and use it to creeate the secret***
+- Create the VM_USERNAME secret ***This is the username that we setup for the virtual machines in our case it is adminuser(assuming nothing was changed in the terraform code)***
+- Create the FRONTEND_PORT secret ***This is the value of the port that we using to ssh into the server. Please go to Azure then click on the resource group that terraform created and then click on load
 
-- DOCKER_USERNAME this is the username for the chosen docker hub where the pipeline would push and pull the docker images to/fom
 
-- EC2_PRIVATE_KEY this is the key the pipeline would use to SSH into the instances and deploy the images. This key is being created by the terraform script you just need to copy the private key from the file it creates and use it to create the secret. The name of key file that terraform would create would be generated-key.pem. That is the name I specified in the script for terraform to name it 
 
-- EC2_USERNAME this is the username the pipeline would use to ssh into your instances if you are using my deafilt script without making any changes to it. The EC2_USERNAME is going to be ubuntu
 
-- FRONTEND_EC2_HOST this is the IP address of the frontend instance 
-
-- TAG this is the value that the pipeline would use to tag your images 
-
-Here are some key take aways I like to point out before continuing with the process I took to achieve this deployment 
-
-- The javascript package.json file is missing the build section which tells node how to properly build the package without this section, node does not properly build the package and I did not add this section myself because for one I don't know if this was by design, by choice or by ommission.
-
-- The code base did not come with a .jar file, I dont also now if this was done purposely or by ommision but I had to build the code base myself using the ./mvnw clean verify command. This would have been an issue for me if i did not have a system that had a java environment but I was lucky enough to have a java environment.
-
-
-So to achieve my desired solution I had two major options that suits the deployment use case 
-
-- Use an EKS cluster on AWS (Or any managed kubernetes offering on other major cloud providers)
-
-- Or use a EC2 instances with Auto-Scaling and load balancing 
-
-I want for the second option which is use a EC2 instances with Auto-Scaling and load balancing for two major reasons
-
-- For simplicity sake, I prefer to keep things as easy possible and avoid over-complicating things when they should not be
-
-- Cost since this is just a test deployment. I dont want to inquire the costs that is involved in creating a Kubernetes Cluster 
-
-## ORDER TO DEPLOY APPLICATION
-
-- First you wuould have to manually trigger the infrastructure deployment. I would explain this further in the INFRASTRUCTURE section below.
-
-- DEPLOY BACKEND APPLICATION 
-
-- DEPLOY FRONT END APPLICATION 
-
-
-STEPS TO DEPLOY THE APPLICATION
-- Create the AWS_ACCESS_KEY_ID secret
-- Create the AWS_SECRET_ACCESS_KEY secret 
-- Create the DOCKER_PASSWORD secret 
-- Create the DOCKER_USERNAME secret 
-- Create the EC2_USERNAME secret (by default this is ubuntu)
-- Create the TAG secret (you can use latest as a default value) 
-- DEPLOY INFRASTRUCTURE 
-- COPY THE IP address of the frontend and and use it to create the FRONTEND_EC2_HOST secret 
-- COPY THE IP address of the backend and and use it to create the BACKEND_EC2_HOST secret 
-- COPY the whole content of the generated-key.pem file and go and use it to create the EC2_PRIVATE_KEY secret
-- DEPLOY THE BACKEND 
-- DEPLOY THE FRONTEND
-
-
-## CREATE INFRASTRUCTURE
-
-To build the infrastructure I used terraform as my preffered IaC tool. I split the terraform scripts into different .tf files for it to be easily readable 
-- compute.tf contains the script for building compute realted resources 
-- network.tf contains the script for building network realted resources
-- backend.tf contains the script to setup the remote backend resources
-- main.tf is used to specify required providers
-- variable.tf contains the script for my variables
-
-All the terraform script is in a folder called INFRASTRUCTURE. So to build or modify the architecture please goto the INFRASTRUCTURE folder in the repo
-
-The following are resources created to achieve my proposed deployment 
-
-- 2 EC2
-- 2 load balancers
-- 1 internet gateway
-- 2 security groups 
-- 2 subnets 
-- 2 auto-saling groups 
-
-
-Initially I used a nategateway for the backend instances to prevent it from assesing the public internet, my plan was to route all traffic to it through the Frontend instance but again to make things straight forward I made the Backend Instance public since security was not started as one of my criterias and I can easily route traffic through the public instance on my next iteration of the project.
-
-
-To create the Infrastructure using the pipeline you would have to manually trigger the pipeline I decided that this pipeline should run on a manual trigger instead of automatically because I feel this suits this pipeline better. The option to run this pipeline automatically is also there but I have commented it out, we can uncomment it any time we want. All the terraform code for the Infrastructure is in the folder called INFRASTRUCTURE.
-
-- To run the terraform pipeline simply click on the .github/workflow folder 
-- Click on create-infra.yml
-- At the top you would see a VIEW RUNS button 
-- Click the view runs button 
-- This would take you to tha actions tab
-- Click Run workflow
-
-Again making the pipeline for the terraform to be manually trigger was a choice I made if you want it to be triggered automatically do the following steps
-
--  To run the terraform pipeline simply click on the .github/workflow folder
-- Click the edit button 
-- Remove the comments on push -> branches -> main 
-- Then comment workflow_dispatch 
-
-The steps above would chabe the pipeline from a manual trigger to automatically trigger if any changes happen in the INFRASTRUCTURE folder which is where all the terraform scripts are kept.
-
-
-
-## NEXT STEPS AFTER CREATING INFRASTRUCTURE 
-
-After you have created the infrastructure using the steps above.
-- COPY THE IP address of the frontend and and use it to create the FRONTEND_EC2_HOST secret 
-
-- COPY THE IP address of the backend and and use it to create the BACKEND_EC2_HOST secret 
-
-- COPY the whole content of the generated-key.pem file and go and use it to create the EC2_PRIVATE_KEY secret
-
-
-## BACKEND
-
-To build the backend I created a Dockerfile in the BACKEND folder to handle the Dockerfile to build the backend images. This is done to make things more organizable.
-
-Then I created a pipeline called backend.yml to automatically build and deploy the backend images to the EC2 instances 
-
-To build the backend, you would have to commit any new changes to the BACKEND folder in the repo and this would automatically triger the build and release for the backend images 
-
-- I created a simple readme file in BACKEND folder in the repo so you can commit any changes to this readme.md file in the BACKEND folder and this would automatically trigger the pipeline 
-
-- You can as well make any changes to the Dockerfile in the BACKEND folder in the repo and this would also trigger the pipeline to build the docker image, deploy to dockerhub, pull it from docker hub and deploy it to the backend instance.
-
-
-## FRONTEND
-
-To build the frontend images I created a Dockerfile but in order to differentiate frontend from backed I created a fRONTEND folder to handle the Dockerfile to build the frontend images. This is done to make things more organizable.
-
-Then I created a pipeline called frontend.yml to automatically build and deploy the frontend images to the EC2 instances 
-
-To build the frontend, you would have to commit any new changes to the FRONTEND folder in the repo and this would automatically triger the build and release for the frontend images 
-
-- I created a simple readme file in FRONTEND folder in the repo so you can commit any changes to this readme.md file in the FRONTEND folder and this would automatically trigger the pipeline 
-
-- You can as well make any changes to the Dockerfile in the FRONTEND folder in the repo and this would also trigger the pipeline to build the docker image deploy, to dockerhub pull it from docker hub and deploy it to the frontend instance.
-
-P.S. Note that the frontend image is not properly build because I commented out the line that build the code in the Dockerfile this is because as I pointed out earlier the package.json is missing the build specification so the code cannot properly build. Whne the package.json is updated with the correct build specification please go to the Dockerfile in the frontend folder and remove the comment on RUN npm run build and # COPY --from=build /app/build /usr/share/nginx/html. After doing this commit the code to github this would automatically trigger the pipeline and build and release the code to the instance.
-
-
-## DESTROY INFRASTRUCTURE
-
-To destroy the whole infrastructure just manually trigger the destroy0infra.yml pipeline
-
-- Click on .github/workflow
-- Click on destroy-infra.yml
-- Click view all runs
-- Click Run worklow
-- This would automatically destroy all the infrastructure 
-
-
-
-
-
-
-
-## MONITORING
-
-To monitor the instances I wrote an ansiblee playbook to setup cloudwatch on the instances but since I need to copy ssh keys to the instance for ansible to be able to ssh to the instance I will not implement the ansible steps fully because it involves some manual processes and I am more focused on automation with this project. 
-
-I can fully optimize the ansible playbook in one more iteration.
-
-The Ansible playbook can be found in the Ansible folder

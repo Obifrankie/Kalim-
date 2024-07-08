@@ -103,6 +103,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "frontend_vmss" {
     public_key = file("vm.pub")
   }
 
+
   source_image_reference {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
