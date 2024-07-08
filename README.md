@@ -115,7 +115,7 @@ To manually try and SSH into the server from your local environment or computer 
 
 
 
-## DEPLOY
+# DEPLOY
 
 ### NOTE STEPS TO DEPLOY THE APPLICATION WILL EXPLAIN FURTHER BELOW
 
