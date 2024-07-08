@@ -55,12 +55,12 @@ I want for the second option which is use a scaleset with load balancing for two
 
 - For simplicity sake, I prefer to keep things as easy possible and avoid over-complicating things when they should not be
 
-- Cost since this is just a test deployment. I dont want to inquire the costs that is involved in creating a Kubernetes Cluster 
+- Cost since this is just a test deployment. I dont want to incure the costs that is involved in creating a Kubernetes Cluster 
 
 
 ## AZURE
 
-The Azure infrastructure used for this deployment is as follows 
+The Azure resources used for this deployment is as follows 
 
 - scale set to automate the horizontal and vertical scaling of our vms
 - load balancers to manage the network traffic coming into our scalesetss
