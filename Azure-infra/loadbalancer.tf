@@ -191,7 +191,7 @@ resource "azurerm_lb_probe" "backend_probe" {
   loadbalancer_id = azurerm_lb.backend_lb.id
   name            = "backend-probe"
   protocol        = "Tcp"
-  port            = 80
+  port            = 8080
 
   interval_in_seconds = 5
   number_of_probes    = 2
@@ -213,8 +213,8 @@ resource "azurerm_lb_rule" "backend_lb_rule" {
   loadbalancer_id            = azurerm_lb.backend_lb.id
   name                       = "backend-lb-rule"
   protocol                   = "Tcp"
-  frontend_port              = 80
-  backend_port               = 80
+  frontend_port              = 8080
+  backend_port               = 8080
   frontend_ip_configuration_name = "backend-config"
   backend_address_pool_ids = [azurerm_lb_backend_address_pool.backend_bap.id]
   probe_id                   = azurerm_lb_probe.backend_probe.id

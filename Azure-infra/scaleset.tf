@@ -119,7 +119,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "frontend_vmss" {
   network_interface {
     name    = "frontend-nic"
     primary = true
-    network_security_group_id = azurerm_network_security_group.nsg.id
+    network_security_group_id = azurerm_network_security_group.nsg_frontend.id
     
 
     ip_configuration {
@@ -161,7 +161,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "backend_vmss" {
   network_interface {
     name    = "backend-nic"
     primary = true
-    network_security_group_id = azurerm_network_security_group.nsg.id
+    network_security_group_id = azurerm_network_security_group.nsg_backend
 
     ip_configuration {
       name      = "internal"

@@ -67,7 +67,7 @@ resource "azurerm_subnet" "subnet_2" {
 #   }
 # }
 
-resource "azurerm_network_security_group" "nsg" {
+resource "azurerm_network_security_group" "nsg_frontend" {
   name                = "vmss-nsg"
   location            = azurerm_resource_group.main_rg.location
   resource_group_name = azurerm_resource_group.main_rg.name
@@ -79,7 +79,25 @@ resource "azurerm_network_security_group" "nsg" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_ranges    = ["22"]
+    destination_port_ranges    = ["22", "80"]
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+resource "azurerm_network_security_group" "nsg_backend" {
+  name                = "vmss-nsg"
+  location            = azurerm_resource_group.main_rg.location
+  resource_group_name = azurerm_resource_group.main_rg.name
+
+  security_rule {
+    name                       = "Allow-SSH"
+    priority                   = 1001
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_ranges    = ["22", "8080"]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
