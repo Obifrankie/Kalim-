@@ -71,9 +71,9 @@ The Azure resources used for this deployment is as follows
 
 ## Pipeline
 
-We are using github actions for the deployment CI/CD. To avoid over complicationg the setup I made both the frontend and the backend habe a public ip address this is bad practise but in the current use case I would make the backend have a public Ip address so that we can easily deply the docker images to the backend as well.
+We are using github actions for the deployment CI/CD. To avoid over complicationg the setup I made both the frontend and the backend have a public ip address this is bad practise but in the current use case I would make the backend have a public Ip address so that we can easily deply the docker images to the backend as well.
 
-Due to the fact that we are using a load balancer to manage the traffic that is getting to out instances behind the scale set we cannot SSH directly to those servers using port 22. We have to set up and configure an Inbound NAT rule for the load balancer this would allow the load balancer monitor all the requests from a particular port on creation and forward every request on that port to port 22 on the instance which is the SSH poet for instances. The load balancer is able to perform this action just like how it handles HTTP requests on a particular port.
+Due to the fact that we are using a load balancer to manage the traffic that is getting to out instances behind the scale set we cannot SSH directly to those servers using port 22. We have to set up and configure an Inbound NAT rule for the load balancer this would allow the load balancer monitor all the requests from a particular port on creation and forward every request on that port to port 22 on the instance which is the SSH port for instances. The load balancer is able to perform this action just like how it handles HTTP requests on a particular port.
 
 To manually try and SSH into the server using the load balancer please run this code ```ssh -i <part to private key> -p <frontendport/range> <username>@<frontend-lb-pip or backend-lp-pip>```
 
