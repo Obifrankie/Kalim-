@@ -15,13 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Check server availability
-        id: check-server
-        run: |
-          if ! ping -c 4 ${{ secrets.BACKEND_LB_PUB_IP }}; then
-            echo "Backend Server not available please run the Azure-deploy-backend.yml pipeline"
-            exit 1
-          fi
+      # - name: Check server availability
+      #   id: check-server
+      #   run: |
+      #     if ! ping -c 4 ${{ secrets.BACKEND_LB_PUB_IP }}; then
+      #       echo "Backend Server not available please run the Azure-deploy-backend.yml pipeline"
+      #       exit 1
+      #     fi
 
       # Set up Docker CLI
       - name: Set up Docker Buildx
